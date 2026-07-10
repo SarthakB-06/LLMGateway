@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis/redis-stack-server:latest  
+    container_name: llm_gateway_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: llm_gateway_analytics
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=gateway_secure_123
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    restart: always
+
+volumes:
+  redis_data:
+  clickhouse_data:
