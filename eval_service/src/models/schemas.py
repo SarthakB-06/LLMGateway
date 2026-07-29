@@ -11,7 +11,7 @@ class CompareRequest(BaseModel):
 
 class JudgeRequest(BaseModel):
     prompt: str
-    responses: Dict[str, str] # e.g. {"model_a": "response...", "model_b": "..."}
+    responses: Dict[str, str] 
 
 class EvalRunSchema(BaseModel):
     run_id: str

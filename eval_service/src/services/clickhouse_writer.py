@@ -1,20 +1,32 @@
 import clickhouse_connect
 from datetime import datetime
 from src.core.config import settings
-# pyrefly: ignore [missing-import]
 from src.models.schemas import EvalRunSchema
 
 class ClickHouseWriter:
     def __init__(self):
         self.client = None
 
-    def connect(self):
-        self.client = clickhouse_connect.get_client(
-            host=settings.CLICKHOUSE_HOST,
-            password=settings.CLICKHOUSE_PASSWORD,
-            username="default"
-        )
-        self._init_table()
+    def connect(self, max_retries=5, retry_delay=3):
+        import time
+        for attempt in range(max_retries):
+            try:
+                self.client = clickhouse_connect.get_client(
+                    host=settings.CLICKHOUSE_HOST,
+                    password=settings.CLICKHOUSE_PASSWORD,
+                    username="default"
+                )
+                self._init_table()
+                print("Successfully connected to ClickHouse")
+                return
+            except Exception as e:
+                print(f"Failed to connect to ClickHouse (attempt {attempt+1}/{max_retries}). Retrying in {retry_delay}s...")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                else:
+                    print("Could not connect to ClickHouse after multiple attempts.")
+                    raise
+
 
     def _init_table(self):
         query = """

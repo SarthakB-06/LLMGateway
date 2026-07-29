@@ -4,12 +4,12 @@ from src.core.config import settings
 from src.services.cache import cache_service
 from pydantic import BaseModel
 from src.services.telemetry import telemetry_service
-from groq import Groq
+# from groq import Groq
 import time
 
 router = APIRouter()
 gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
-groq_client = Groq(api_key=settings.GROQ_API_KEY)
+# groq_client = Groq(api_key=settings.GROQ_API_KEY)
 
 class ChatRequest(BaseModel):
     prompt: str

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, Header, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional
-from core.config import settings
-from services.cache import cache_service
-from services.telemetry import telemetry_service
+from src.core.config import settings
+from src.services.cache import cache_service
+from src.services.telemetry import telemetry_service
 from google import genai
-from groq import Groq
+# from groq import Groq
 import time
 
 
@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
-groq_client = Groq(api_key=settings.GROQ_API_KEY)
+# groq_client = Groq(api_key=settings.GROQ_API_KEY)
 
 class InternalCompletionRequest(BaseModel):
     provider: str # "google" or "groq"
@@ -78,18 +78,18 @@ async def internal_complete(
             tokens_used = response.usage_metadata.total_token_count if response.usage_metadata else 0
             cost = (tokens_used / 1000000) * 0.15 
             
-        elif payload.provider == "groq":
-            kwargs = {
-                "messages": [{"role": "user", "content": payload.prompt}],
-                "model": payload.model,
-            }
-            if payload.response_format and payload.response_format.get("type") == "json_object":
-                kwargs["response_format"] = {"type": "json_object"}
+        # elif payload.provider == "groq":
+        #     kwargs = {
+        #         "messages": [{"role": "user", "content": payload.prompt}],
+        #         "model": payload.model,
+        #     }
+        #     if payload.response_format and payload.response_format.get("type") == "json_object":
+        #         kwargs["response_format"] = {"type": "json_object"}
                 
-            response = groq_client.chat.completions.create(**kwargs)
-            response_text = response.choices[0].message.content
-            tokens_used = response.usage.total_tokens if response.usage else 0
-            cost = (tokens_used / 1000000) * 0.05
+        #     response = groq_client.chat.completions.create(**kwargs)
+        #     response_text = response.choices[0].message.content
+        #     tokens_used = response.usage.total_tokens if response.usage else 0
+        #     cost = (tokens_used / 1000000) * 0.05
         else:
             raise ValueError(f"Unknown provider: {payload.provider}")
         

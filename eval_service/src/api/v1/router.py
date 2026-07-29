@@ -1,8 +1,8 @@
 from fastapi import APIRouter, BackgroundTasks
-from models.schemas import CompareRequest, JudgeRequest, EvalRunSchema
-from services.gateway_client import gateway_client
-from services.judge import evaluate_responses
-from services.clickhouse_writer import clickhouse_writer
+from src.models.schemas import CompareRequest, JudgeRequest, EvalRunSchema
+from src.services.gateway_client import gateway_client
+from src.services.judge import evaluate_responses
+from src.services.clickhouse_writer import clickhouse_writer
 import asyncio
 import uuid
 

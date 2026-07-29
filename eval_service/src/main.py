@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from api.v1.router import router as v1_router
-from services.clickhouse_writer import clickhouse_writer
+from src.api.v1.router import router as v1_router
+from src.services.clickhouse_writer import clickhouse_writer
 
 app = FastAPI(title="Eval Service", version="1.0.0")
 

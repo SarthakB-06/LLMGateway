@@ -1,6 +1,6 @@
 import json
-from services.gateway_client import gateway_client
-from core.config import settings
+from src.services.gateway_client import gateway_client
+from src.core.config import settings
 
 RUBRIC_TEMPLATE = """
 You are an impartial evaluator comparing responses to the same prompt.
