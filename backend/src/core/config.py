@@ -5,6 +5,9 @@ class Settings(BaseSettings):
     APP_NAME: str = "Enterprise AI Gateway"
     DEBUG: bool = False
     PORT: int = 8000
+
+    INTERNAL_API_KEY: str = "secret-internal-key-123"
+
     
     GEMINI_API_KEY: str = Field(..., validation_alias="GEMINI_API_KEY")
     GROQ_API_KEY: str = Field(..., validation_alias="GROQ_API_KEY")

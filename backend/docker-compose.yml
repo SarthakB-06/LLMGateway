@@ -21,6 +21,20 @@ services:
     volumes:
       - clickhouse_data:/var/lib/clickhouse
     restart: always
+  eval_service:
+    build: ../eval_service
+    container_name: llm_gateway_eval
+    ports:
+      - "8001:8001"
+    environment:
+      - GATEWAY_URL=http://backend:8000
+      - INTERNAL_API_KEY=secret-internal-key-123
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PASSWORD=gateway_secure_123
+      - JUDGE_MODEL=gemini-2.5-flash
+      - JUDGE_PROVIDER=google
+    depends_on:
+      - clickhouse
 
 volumes:
   redis_data:
