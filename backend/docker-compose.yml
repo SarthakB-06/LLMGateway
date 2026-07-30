@@ -27,7 +27,7 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - GATEWAY_URL=http://backend:8000
+      - GATEWAY_URL=http://host.docker.internal:8000
       - INTERNAL_API_KEY=secret-internal-key-123
       - CLICKHOUSE_HOST=clickhouse
       - CLICKHOUSE_PASSWORD=gateway_secure_123

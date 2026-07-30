@@ -23,6 +23,15 @@ class EvalRunSchema(BaseModel):
     cache_hit: bool
     correctness_score: Optional[int] = None
     completeness_score: Optional[int] = None
+    faithfullness_score: Optional[int] = None
+    groundedness_score: Optional[int] = None
     clarity_score: Optional[int] = None
     verdict: Optional[str] = None
     rationale: Optional[str] = None
+
+
+class RagEvalRequest(BaseModel):
+    question: str
+    context: str
+    answer: str
+    model: str 

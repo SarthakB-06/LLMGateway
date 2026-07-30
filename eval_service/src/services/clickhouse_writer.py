@@ -41,6 +41,8 @@ class ClickHouseWriter:
             cache_hit Bool,
             correctness_score Nullable(UInt8),
             completeness_score Nullable(UInt8),
+            faithfullness_score Nullable(UInt8),
+            groundedness_score Nullable(UInt8),
             clarity_score Nullable(UInt8),
             verdict Nullable(String),
             rationale Nullable(String)
@@ -64,6 +66,8 @@ class ClickHouseWriter:
             run.cache_hit,
             run.correctness_score,
             run.completeness_score,
+            run.faithfullness_score,
+            run.groundedness_score,
             run.clarity_score,
             run.verdict,
             run.rationale
@@ -75,7 +79,7 @@ class ClickHouseWriter:
             column_names=[
                 'run_id', 'timestamp', 'prompt', 'model', 'response', 'latency_ms', 
                 'cost', 'cache_hit', 'correctness_score', 'completeness_score', 
-                'clarity_score', 'verdict', 'rationale'
+                'faithfullness_score','groundedness_score','clarity_score', 'verdict', 'rationale'
             ]
         )
 

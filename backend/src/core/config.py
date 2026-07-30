@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     
     GEMINI_API_KEY: str = Field(..., validation_alias="GEMINI_API_KEY")
-    GROQ_API_KEY: str = Field(..., validation_alias="GROQ_API_KEY")
+    # GROQ_API_KEY: str = Field(..., validation_alias="GROQ_API_KEY")
     
     REDIS_URL: str = "redis://localhost:6379/0"
     CLICKHOUSE_HOST: str = "localhost"

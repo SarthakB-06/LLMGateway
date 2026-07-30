@@ -1,8 +1,9 @@
-from fastapi import APIRouter, BackgroundTasks
-from src.models.schemas import CompareRequest, JudgeRequest, EvalRunSchema
+from fastapi import APIRouter, BackgroundTasks,Query
+from src.models.schemas import CompareRequest, JudgeRequest, EvalRunSchema, RagEvalRequest
 from src.services.gateway_client import gateway_client
 from src.services.judge import evaluate_responses
 from src.services.clickhouse_writer import clickhouse_writer
+from src.services.faithfulness import evaluate_rag_response
 import asyncio
 import uuid
 
@@ -61,3 +62,74 @@ async def run_judge(request: JudgeRequest, background_tasks: BackgroundTasks):
         background_tasks.add_task(clickhouse_writer.write_run, run)
         
     return {"run_id": run_id, "evaluation": evaluation}
+
+
+@router.post("/rag-eval")
+async def run_rag_eval(request: RagEvalRequest, background_tasks: BackgroundTasks):
+    run_id = str(uuid.uuid4())
+
+    scores = evaluate_rag_response(
+        question=request.question,
+        context=request.context,
+        answer=request.answer
+    )
+
+
+    run = EvalRunSchema(
+        run_id=run_id,
+        prompt=request.question,
+        model=request.model,
+        response=request.answer,
+        latency_ms=0,
+        cost=0.0,
+        cache_hit=False,
+        faithfullness_score=scores["faithfulness_score"],
+        groundedness_score=scores["groundedness_score"],
+    )
+
+    background_tasks.add_task(clickhouse_writer.write_run, run)
+
+    return {"run_id": run_id, "scores":scores}
+
+
+
+
+@router.get("/history")
+async def get_history(limit: int = Query(50, ge=1, le=100)):
+    try:
+        query = f"""
+        SELECT 
+            run_id, timestamp, prompt, model, response, 
+            latency_ms, cost, cache_hit, 
+            correctness_score, completeness_score, faithfullness_score, groundedness_score, clarity_score, 
+            verdict, rationale
+        FROM eval_runs
+        ORDER BY timestamp DESC
+        LIMIT {limit}
+        """
+        result = clickhouse_writer.client.query(query)
+        
+        # Format the result nicely for the frontend
+        history = []
+        for row in result.result_rows:
+            history.append({
+                "run_id": str(row[0]),
+                "timestamp": row[1].isoformat() if row[1] else None,
+                "prompt": row[2],
+                "model": row[3],
+                "response": row[4],
+                "latency_ms": row[5],
+                "cost": row[6],
+                "cache_hit": row[7],
+                "correctness_score": row[8],
+                "completeness_score": row[9],
+                "faithfullness_score":row[10],
+                "groundedness_score":row[11],
+                "clarity_score": row[12],
+                "verdict": row[13],
+                "rationale": row[14]
+            })
+            
+        return {"history": history}
+    except Exception as e:
+        return {"error": str(e)}

@@ -7,3 +7,5 @@ google-genai
 redis>=5.0.1
 redisvl>=0.3.0
 clickhouse-connect>=0.7.0
+datasets
+langchain-community<0.3.0

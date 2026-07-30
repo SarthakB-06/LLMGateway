@@ -4,7 +4,11 @@ httpx
 clickhouse-connect
 ragas
 bert-score
+pydantic==2.6.1
+pydantic-settings==2.1.0
 python-dotenv
 redis>=5.0.1
 redisvl>=0.3.0
 langchain-google-genai>=0.1.1
+datasets
+langchain-community<0.3.0

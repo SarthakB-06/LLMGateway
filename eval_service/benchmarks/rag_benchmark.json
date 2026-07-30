@@ -1,0 +1,12 @@
+[
+  {
+    "question": "What is the capital of France?",
+    "context": "France is a country in Western Europe. Its capital is Paris.",
+    "expected_answer": "Paris"
+  },
+  {
+    "question": "How fast is the caching mechanism?",
+    "context": "The LLM Gateway uses a Redis Stack semantic cache. Cache hits are served in approximately 5ms.",
+    "expected_answer": "Cache hits are served in ~5ms."
+  }
+]

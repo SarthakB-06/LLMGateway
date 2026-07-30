@@ -17,7 +17,7 @@ class GatewayClient:
             
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                f"{self.base_url}/internal/complete",
+                f"{self.base_url}/api/internal/complete",
                 headers=self.headers,
                 json=payload,
                 timeout=60.0
