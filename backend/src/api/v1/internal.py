@@ -38,30 +38,31 @@ async def internal_complete(
     start_time = time.time()
     try:
         # 1. Check Cache
-        cached_response = await cache_service.get_response(payload.model, payload.prompt)
-        if cached_response:
-            latency_ms = int((time.time() - start_time) * 1000)
-            saved_tokens = cached_response.get("usage", {}).get("total_tokens", 0)
-            
-            # Extract content from cached standard format
-            content = cached_response["choices"][0]["message"]["content"]
-            
-            background_tasks.add_task(
-                telemetry_service.log_usage,
-                model=payload.model,
-                latency_ms=latency_ms,
-                cache_hit=True,
-                cache_type=cached_response["usage"]["cache_type"],
-                total_tokens=saved_tokens,
-                estimated_cost=0.0 
-            )
-            return {
-                "response": content,
-                "latency_ms": latency_ms,
-                "tokens": saved_tokens,
-                "cost": 0.0,
-                "cache_hit": True
-            }
+        if not payload.response_format:
+            cached_response = await cache_service.get_response(payload.model, payload.prompt)
+            if cached_response:
+                latency_ms = int((time.time() - start_time) * 1000)
+                saved_tokens = cached_response.get("usage", {}).get("total_tokens", 0)
+                
+                # Extract content from cached standard format
+                content = cached_response["choices"][0]["message"]["content"]
+                
+                background_tasks.add_task(
+                    telemetry_service.log_usage,
+                    model=payload.model,
+                    latency_ms=latency_ms,
+                    cache_hit=True,
+                    cache_type=cached_response["usage"]["cache_type"],
+                    total_tokens=saved_tokens,
+                    estimated_cost=0.0 
+                )
+                return {
+                    "response": content,
+                    "latency_ms": latency_ms,
+                    "tokens": saved_tokens,
+                    "cost": 0.0,
+                    "cache_hit": True
+                }
         # 2. Call Provider
         if payload.provider == "google":
             # Pass response_format if provided (e.g. for JSON structured output)

@@ -12,3 +12,4 @@ redisvl>=0.3.0
 langchain-google-genai>=0.1.1
 datasets
 langchain-community<0.3.0
+anthropic
