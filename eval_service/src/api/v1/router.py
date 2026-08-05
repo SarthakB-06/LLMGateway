@@ -147,7 +147,7 @@ async def get_history(limit: int = Query(50, ge=1, le=100)):
         model_scores : dict = {}
         for h in history:
             cs = composite_score(h["correctness_score"], h["completeness_score"], h["clarity_score"])
-            if cs is None:
+            if cs is not None:
                 model_scores.setdefault(h["model"], []).append(cs)
 
         model_summary = {}

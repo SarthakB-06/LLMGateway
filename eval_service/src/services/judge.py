@@ -1,4 +1,3 @@
-from colorama import just_fix_windows_console
 import json
 from src.services.gateway_client import gateway_client
 from src.core.config import settings

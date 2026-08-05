@@ -3,15 +3,15 @@ from datetime import datetime
 from src.core.config import settings
 from src.models.schemas import EvalRunSchema
 
-_NEW_COLUMNS = {
-    _NEW_COLUMNS = [
+
+_NEW_COLUMNS = [
     ("judge_verdict",      "Nullable(String)"),
     ("task_type",          "Nullable(String)"),
     ("prompt_version",     "Nullable(String)"),
     ("faithfulness_score", "Nullable(Float64)"),
     ("groundedness_score", "Nullable(Float64)"),
 ]
-}
+
 
 class ClickHouseWriter:
     def __init__(self):
@@ -102,7 +102,7 @@ class ClickHouseWriter:
                 'faithfullness_score', 'groundedness_score', 'clarity_score',
                 'verdict', 'rationale',
                 'judge_verdict', 'task_type', 'prompt_version',
-                'faithfulness_score', 'groundedness_score',
+                'faithfulness_score', 'rag_groundedness_score',
             ]
         )
 clickhouse_writer = ClickHouseWriter()

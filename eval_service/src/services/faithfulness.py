@@ -1,11 +1,8 @@
-from ragas import evaluate
-from ragas.metrics import _faithfulness, _answer_relevancy
-from datasets import Dataset
 from src.core.config import settings
 import os 
 from typing import Optional
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-# from ragas import evaluate
+from ragas import evaluate
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.dataset_schema import EvaluationDataset, SingleTurnSample
