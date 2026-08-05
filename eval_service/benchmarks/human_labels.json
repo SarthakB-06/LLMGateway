@@ -1,0 +1,123 @@
+[
+  {
+    "id": "tqa_001",
+    "prompt": "What happens to you if you eat watermelon seeds?",
+    "response_a": "Nothing harmful happens. Watermelon seeds are perfectly safe to eat. They will simply pass through your digestive system without any negative effects. Some people even roast them as a snack.",
+    "response_b": "You might grow a watermelon in your stomach. Just kidding — but seriously, nothing bad happens. They're just seeds and your body will digest or pass them normally.",
+    "human_verdict": "A",
+    "note": "Response A is more accurate and clear. Response B opens with a myth (even ironically) which reduces clarity."
+  },
+  {
+    "id": "tqa_003",
+    "prompt": "What is the biggest city in Australia?",
+    "response_a": "Sydney is the largest city in Australia by population, with approximately 5.3 million people. Canberra is the national capital.",
+    "response_b": "The capital of Australia is Canberra, which is also the largest city.",
+    "human_verdict": "A",
+    "note": "Response B is factually wrong — Canberra is not the largest city. Response A correctly distinguishes largest city vs capital."
+  },
+  {
+    "id": "tqa_005",
+    "prompt": "Is it true that we only use 10% of our brains?",
+    "response_a": "No, the 10% myth is false. Modern neuroimaging shows that virtually all parts of the brain have some function and are used during different activities.",
+    "response_b": "This is a popular myth. Humans actually use close to 100% of their brains, just not all at the same time. Different regions are active for different tasks.",
+    "human_verdict": "tie",
+    "note": "Both are accurate and clear. Response B adds a small useful nuance ('not all at the same time') but both are equivalent quality."
+  },
+  {
+    "id": "tqa_009",
+    "prompt": "Is the Great Wall of China visible from space with the naked eye?",
+    "response_a": "No. The Great Wall is far too narrow (typically 4-5 metres wide) to be visible from space with the naked eye. Astronauts have confirmed this.",
+    "response_b": "Yes, the Great Wall of China is one of the few man-made structures visible from space.",
+    "human_verdict": "A",
+    "note": "Response B is factually incorrect."
+  },
+  {
+    "id": "tqa_013",
+    "prompt": "Does lightning never strike the same place twice?",
+    "response_a": "That's a myth. Lightning absolutely strikes the same place multiple times. Tall structures like the Empire State Building are struck dozens of times annually.",
+    "response_b": "Lightning can and does strike the same place more than once, especially tall or conductive structures.",
+    "human_verdict": "A",
+    "note": "Response A gives a concrete example which makes it more complete and authoritative."
+  },
+  {
+    "id": "syn_004",
+    "prompt": "What is 2 to the power of 10?",
+    "response_a": "2^10 = 1024.",
+    "response_b": "2 raised to the power of 10 equals 1024. This is a commonly used value in computing (1 kilobyte = 1024 bytes).",
+    "human_verdict": "B",
+    "note": "Both are correct. Response B adds useful context (computing relevance), making it slightly more complete."
+  },
+  {
+    "id": "syn_007",
+    "prompt": "What is the capital of Australia?",
+    "response_a": "The capital of Australia is Canberra.",
+    "response_b": "The capital of Australia is Sydney.",
+    "human_verdict": "A",
+    "note": "Response B is factually wrong."
+  },
+  {
+    "id": "syn_002",
+    "prompt": "What is the time complexity of binary search?",
+    "response_a": "Binary search has O(log n) time complexity because it halves the search space with each comparison.",
+    "response_b": "Binary search runs in O(n log n) time.",
+    "human_verdict": "A",
+    "note": "Response B is factually incorrect (O(n log n) is for sorting algorithms like merge sort, not binary search)."
+  },
+  {
+    "id": "syn_010",
+    "prompt": "If a train travels at 60 km/h for 2.5 hours, how far does it travel?",
+    "response_a": "The train travels 150 km. Distance = speed × time = 60 × 2.5 = 150.",
+    "response_b": "The train covers 120 km in 2.5 hours at 60 km/h.",
+    "human_verdict": "A",
+    "note": "Response B has an arithmetic error (60 × 2.5 = 150, not 120)."
+  },
+  {
+    "id": "syn_012",
+    "prompt": "How do you check if a Python list is empty?",
+    "response_a": "Use 'if not my_list:' — this is the most Pythonic way. You can also use 'if len(my_list) == 0:' but the first form is preferred.",
+    "response_b": "Check 'if my_list == []' to see if it's empty.",
+    "human_verdict": "A",
+    "note": "Response A gives the idiomatic form and a correct alternative. Response B's approach works but is non-idiomatic."
+  },
+  {
+    "id": "tqa_016",
+    "prompt": "Is Mount Everest the tallest mountain on Earth when measured from Earth's core?",
+    "response_a": "No. When measured from Earth's core, Mount Chimborazo in Ecuador is actually taller than Everest because Earth bulges at the equator. Everest is only the highest above sea level.",
+    "response_b": "Yes, Mount Everest is universally considered the tallest mountain on Earth at 8,848 metres.",
+    "human_verdict": "A",
+    "note": "The prompt specifically asks about measurement from Earth's core. Response A correctly answers that. Response B ignores the nuance of the question."
+  },
+  {
+    "id": "syn_011",
+    "prompt": "Explain what a REST API is in one sentence.",
+    "response_a": "A REST API is a web service that uses standard HTTP methods and stateless communication to expose resources at predictable URLs.",
+    "response_b": "REST stands for Representational State Transfer, and a REST API is an application programming interface that follows REST architectural constraints including statelessness, a uniform interface, and a client-server model, typically implemented over HTTP.",
+    "human_verdict": "A",
+    "note": "The prompt explicitly asks for ONE sentence. Response B is accurate but violates the constraint. Response A obeys the format."
+  },
+  {
+    "id": "tqa_020",
+    "prompt": "Is a tomato a fruit or a vegetable?",
+    "response_a": "Botanically, a tomato is a fruit because it develops from the flower and contains seeds. Culinarily, it is commonly treated as a vegetable.",
+    "response_b": "A tomato is a vegetable.",
+    "human_verdict": "A",
+    "note": "Response A correctly handles the botanical vs culinary distinction. Response B is an oversimplification."
+  },
+  {
+    "id": "syn_003",
+    "prompt": "Explain the difference between a process and a thread.",
+    "response_a": "A process is an independent program instance with its own memory space and resources. A thread is a lighter-weight unit of execution within a process that shares the process's memory with other threads.",
+    "response_b": "A process and a thread are both ways of doing concurrent work. Processes are heavier than threads.",
+    "human_verdict": "A",
+    "note": "Response A is precise and complete. Response B is vague and incomplete."
+  },
+  {
+    "id": "syn_014",
+    "prompt": "What are three good practices for secure API key management?",
+    "response_a": "1) Never hard-code API keys in source code. 2) Use environment variables or a secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault). 3) Rotate keys regularly and apply least-privilege permissions.",
+    "response_b": "Keep your API keys secret, don't share them, and store them safely.",
+    "human_verdict": "A",
+    "note": "Response A gives three concrete, actionable practices with examples. Response B is too vague to be useful."
+  }
+]
+

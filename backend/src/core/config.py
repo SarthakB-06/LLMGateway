@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     CLICKHOUSE_HOST: str = "localhost"
 
     CLICKHOUSE_PASSWORD: str = "gateway_secure_123"
+    EVAL_SERVICE_URL: str = "http://localhost:8001"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

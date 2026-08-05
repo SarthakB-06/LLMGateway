@@ -33,6 +33,7 @@ services:
       - CLICKHOUSE_PASSWORD=gateway_secure_123
       - JUDGE_MODEL=gemini-2.5-flash
       - JUDGE_PROVIDER=google
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     depends_on:
       - clickhouse
 

@@ -1,0 +1,96 @@
+name: Nightly Eval Monitor
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 00:00 UTC every night
+  workflow_dispatch:      
+
+jobs:
+  nightly-benchmark:
+    name: Nightly Quality Monitor
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start infrastructure
+        run: |
+          docker compose -f backend/docker-compose.yml up -d redis clickhouse
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8123/ping; then break; fi
+            sleep 2
+          done
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install -r eval_service/requirements.txt
+
+      - name: Start gateway
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          INTERNAL_API_KEY: secret-internal-key-123
+          REDIS_URL: redis://localhost:6379/0
+          CLICKHOUSE_HOST: localhost
+          CLICKHOUSE_PASSWORD: gateway_secure_123
+        run: |
+          python -m src.main &
+          sleep 5
+        working-directory: backend
+
+      - name: Start eval_service
+        env:
+          GATEWAY_URL: http://localhost:8000
+          INTERNAL_API_KEY: secret-internal-key-123
+          CLICKHOUSE_HOST: localhost
+          CLICKHOUSE_PASSWORD: gateway_secure_123
+          JUDGE_MODEL: gemini-2.5-flash
+          JUDGE_PROVIDER: google
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          uvicorn src.main:app --host 0.0.0.0 --port 8001 &
+          sleep 5
+        working-directory: eval_service
+
+      - name: Run nightly benchmark
+        id: benchmark
+        continue-on-error: true
+        env:
+          EVAL_SERVICE_URL: http://localhost:8001
+          CLICKHOUSE_HOST: localhost
+          CLICKHOUSE_PASSWORD: gateway_secure_123
+          BENCHMARK_LIMIT: "30"
+          REGRESSION_THRESHOLD: "0.2"
+        run: |
+          python eval_service/scripts/run_benchmark.py 2>&1 | tee /tmp/benchmark_output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Notify on regression
+        if: steps.benchmark.outcome == 'failure'
+        env:
+          WEBHOOK_URL: ${{ secrets.EVAL_WEBHOOK_URL }}
+        run: |
+          OUTPUT=$(cat /tmp/benchmark_output.txt | tail -20)
+          PAYLOAD=$(jq -n --arg text " *Nightly Eval Regression Detected*\n\`\`\`$OUTPUT\`\`\`\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}" '{"content": $text}')
+          curl -sf -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+
+      - name: Notify on success
+        if: steps.benchmark.outcome == 'success' && env.EVAL_WEBHOOK_URL != ''
+        env:
+          WEBHOOK_URL: ${{ secrets.EVAL_WEBHOOK_URL }}
+        run: |
+          OUTPUT=$(cat /tmp/benchmark_output.txt | grep -E "(Mean|Lower|Upper|passed)" | head -10)
+          PAYLOAD=$(jq -n --arg text " *Nightly Eval Passed*\n\`\`\`$OUTPUT\`\`\`\nCommit: ${{ github.sha }}" '{"content": $text}')
+          curl -sf -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+

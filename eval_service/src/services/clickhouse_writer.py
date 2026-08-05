@@ -3,6 +3,16 @@ from datetime import datetime
 from src.core.config import settings
 from src.models.schemas import EvalRunSchema
 
+_NEW_COLUMNS = {
+    _NEW_COLUMNS = [
+    ("judge_verdict",      "Nullable(String)"),
+    ("task_type",          "Nullable(String)"),
+    ("prompt_version",     "Nullable(String)"),
+    ("faithfulness_score", "Nullable(Float64)"),
+    ("groundedness_score", "Nullable(Float64)"),
+]
+}
+
 class ClickHouseWriter:
     def __init__(self):
         self.client = None
@@ -29,7 +39,7 @@ class ClickHouseWriter:
 
 
     def _init_table(self):
-        query = """
+        create_query = """
         CREATE TABLE IF NOT EXISTS eval_runs (
             run_id UUID,
             timestamp DateTime,
@@ -49,12 +59,18 @@ class ClickHouseWriter:
         ) ENGINE = MergeTree()
         ORDER BY timestamp;
         """
-        self.client.command(query)
+        self.client.command(create_query)
+
+        for col_name, col_type in _NEW_COLUMNS:
+            try:
+                alter_query = f"ALTER TABLE eval_runs ADD COLUMN IF NOT EXISTS {col_name} {col_type}"
+                self.client.command(alter_query)
+            except Exception as e:
+                print(f"[ClickHouse] Could not add column {col_name}: {e}")
 
     def write_run(self, run: EvalRunSchema):
         if not self.client:
             self.connect()
-            
         row = [
             run.run_id,
             datetime.utcnow(),
@@ -67,20 +83,26 @@ class ClickHouseWriter:
             run.correctness_score,
             run.completeness_score,
             run.faithfullness_score,
-            run.groundedness_score,
+            run.groundedness_score,   
             run.clarity_score,
             run.verdict,
-            run.rationale
+            run.rationale,
+            run.judge_verdict,         
+            run.task_type,             
+            run.prompt_version,        
+            run.faithfulness_score,    
+            run.rag_groundedness_score, 
         ]
-        
         self.client.insert(
-            'eval_runs', 
-            [row], 
+            'eval_runs',
+            [row],
             column_names=[
-                'run_id', 'timestamp', 'prompt', 'model', 'response', 'latency_ms', 
-                'cost', 'cache_hit', 'correctness_score', 'completeness_score', 
-                'faithfullness_score','groundedness_score','clarity_score', 'verdict', 'rationale'
+                'run_id', 'timestamp', 'prompt', 'model', 'response', 'latency_ms',
+                'cost', 'cache_hit', 'correctness_score', 'completeness_score',
+                'faithfullness_score', 'groundedness_score', 'clarity_score',
+                'verdict', 'rationale',
+                'judge_verdict', 'task_type', 'prompt_version',
+                'faithfulness_score', 'groundedness_score',
             ]
         )
-
 clickhouse_writer = ClickHouseWriter()

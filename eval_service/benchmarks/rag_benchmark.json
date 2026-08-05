@@ -1,12 +1,78 @@
 [
   {
     "question": "What is the capital of France?",
-    "context": "France is a country in Western Europe. Its capital is Paris.",
+    "context": "France is a country in Western Europe. Its capital is Paris, which is also the largest city in France with a population of over 2 million.",
     "expected_answer": "Paris"
   },
   {
     "question": "How fast is the caching mechanism?",
     "context": "The LLM Gateway uses a Redis Stack semantic cache. Cache hits are served in approximately 5ms.",
     "expected_answer": "Cache hits are served in ~5ms."
+  },
+  {
+    "question": "What embedding model is used for semantic caching?",
+    "context": "The LLM Gateway converts incoming prompts into 3072-dimensional embeddings using Google's gemini-embedding-001 model. These embeddings are stored in Redis Stack and used for cosine similarity search.",
+    "expected_answer": "The gemini-embedding-001 model is used to generate embeddings for semantic caching."
+  },
+  {
+    "question": "What database stores telemetry data?",
+    "context": "Upon request completion, usage metrics (tokens processed, estimated cost, latency, cache hit status) are asynchronously streamed into ClickHouse via a high-performance MergeTree table.",
+    "expected_answer": "ClickHouse stores telemetry data using a MergeTree table."
+  },
+  {
+    "question": "What happens when the eval_service is unreachable from the /route endpoint?",
+    "context": "The /route endpoint calls eval_service /recommend with a 2-second hard timeout. If eval_service is unreachable, times out, or has insufficient data, the gateway falls back to the default safe model: gemini-2.5-flash.",
+    "expected_answer": "The gateway falls back to gemini-2.5-flash if eval_service is unreachable or times out."
+  },
+  {
+    "question": "What is a Pareto-optimal model in the context of the eval service?",
+    "context": "The /pareto endpoint flags a model as Pareto-dominated if another model has a strictly higher quality CI lower bound AND a strictly lower average cost. A model that is not dominated by any other model is marked is_pareto_optimal=True.",
+    "expected_answer": "A model is Pareto-optimal if no other model simultaneously has higher quality and lower cost."
+  },
+  {
+    "question": "What does judge_verdict = 'inconclusive' mean?",
+    "context": "The LLM judge is called twice per comparison: once in A-then-B order, and once with A and B swapped. If both runs agree on a winner, the judge_verdict reflects that winner. If the two runs disagree, judge_verdict is set to 'inconclusive' to indicate that position bias may be affecting the result.",
+    "expected_answer": "inconclusive means the two judge calls disagreed, likely due to position bias — no reliable winner could be determined."
+  },
+  {
+    "question": "What threshold does /recommend use to select a model?",
+    "context": "The /recommend endpoint computes a bootstrap confidence interval for each model's composite quality score. It returns the cheapest model whose CI lower bound (5th percentile) is at or above the min_quality_threshold provided in the request.",
+    "expected_answer": "The model's CI lower bound (5th percentile) must be >= min_quality_threshold."
+  },
+  {
+    "question": "How many bootstrap resamples does the stats module use by default?",
+    "context": "The stats.py module provides bootstrap_ci(), which resamples with replacement 1000 times by default to estimate the 5th and 95th percentile confidence bounds for any aggregate score.",
+    "expected_answer": "1000 bootstrap resamples by default."
+  },
+  {
+    "question": "How is prompt_version set in benchmark runs?",
+    "context": "The run_benchmark.py script tags each eval run with a prompt_version field set to the output of 'git rev-parse --short HEAD'. This allows ClickHouse to group results by code version and compare CI lower bounds across versions.",
+    "expected_answer": "prompt_version is set to the short git commit hash using git rev-parse --short HEAD."
+  },
+  {
+    "question": "What port does the LLM Gateway backend run on?",
+    "context": "The backend FastAPI gateway runs on port 8000. The eval_service runs on port 8001. The Redis Stack instance is on port 6379. ClickHouse HTTP interface is on port 8123.",
+    "expected_answer": "The backend gateway runs on port 8000."
+  },
+  {
+    "question": "What does routing_source mean in the /route endpoint response?",
+    "context": "The /route endpoint returns a routing_source field. This field is 'cache' if the response was served from the semantic cache, 'eval_recommendation' if the eval_service provided a model recommendation, and 'fallback' if the eval_service was unavailable or had no data.",
+    "expected_answer": "routing_source indicates how the model was selected: cache, eval_recommendation, or fallback."
+  },
+  {
+    "question": "What columns does the Faithfulness metric in ragas 0.4.x require?",
+    "context": "In ragas 0.4.x, the Faithfulness metric's required_columns are: user_input, response, and retrieved_contexts. The retrieved_contexts field must be a list of strings, not a single string. These column names differ from older ragas versions that used question, answer, and context.",
+    "expected_answer": "Faithfulness requires user_input, response, and retrieved_contexts (a list of strings)."
+  },
+  {
+    "question": "What does the validate_judge.py script produce?",
+    "context": "The validate_judge.py script loads human_labels.json (15 hand-labelled examples), calls the eval_service /judge endpoint for each example, and computes both agreement percentage and Cohen's kappa. It prints a formatted table and a quotable README summary line.",
+    "expected_answer": "It produces agreement percentage, Cohen's kappa, and a quotable README line summarising human-judge alignment."
+  },
+  {
+    "question": "What CI trigger path does the eval-gate GitHub Actions workflow use?",
+    "context": "The eval-gate.yml GitHub Actions workflow triggers on pull_request events that touch files in: eval_service/src/**, eval_service/benchmarks/**, or backend/src/**. It does not trigger on changes to frontend or documentation files.",
+    "expected_answer": "It triggers on PRs touching eval_service/src/, eval_service/benchmarks/, or backend/src/."
   }
 ]
+
