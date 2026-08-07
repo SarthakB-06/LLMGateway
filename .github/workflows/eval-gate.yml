@@ -87,7 +87,7 @@ jobs:
           EVAL_SERVICE_URL: http://localhost:8001
           CLICKHOUSE_HOST: localhost
           CLICKHOUSE_PASSWORD: gateway_secure_123
-          BENCHMARK_MODELS: "google:gemini-2.5-flash,google:gemini-2.0-flash"
+          BENCHMARK_MODELS: "google:gemini-2.5-flash,google:gemini-1.5-flash"
           BENCHMARK_LIMIT: "15"
           REGRESSION_THRESHOLD: "0.3"
         run: |

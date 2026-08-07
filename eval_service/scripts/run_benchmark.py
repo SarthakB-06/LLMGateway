@@ -8,7 +8,7 @@ Usage:
 Environment variables:
     EVAL_SERVICE_URL     Base URL of the eval service (default: http://localhost:8001)
     BENCHMARK_MODELS     Comma-separated provider:model pairs
-                         (default: google:gemini-2.5-flash,google:gemini-2.0-flash)
+                         (default: google:gemini-2.5-flash,google:gemini-1.5-flash)
     REGRESSION_THRESHOLD Max allowed drop in CI lower-bound vs previous run (default: 0.3)
     BENCHMARK_LIMIT      How many dataset entries to run (default: 20, for speed in CI)
     CLICKHOUSE_HOST      ClickHouse host for reading previous run (default: localhost)
@@ -37,7 +37,7 @@ CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "gateway_secure_123")
 
 DEFAULT_MODELS = [
     {"provider": "google", "model": "gemini-2.5-flash"},
-    {"provider": "google", "model": "gemini-2.0-flash"},
+    {"provider": "google", "model": "gemini-1.5-flash"},
 ]
 
 def parse_models() -> list:
