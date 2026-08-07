@@ -182,7 +182,9 @@ async def main():
                 }
 
                 if len(responses) < 2:
-                    print("SKIP (not enough model responses)")
+                    # Print the actual errors so CI logs show what failed
+                    errs = [(r.get("model"), r.get("error")) for r in results if "error" in r]
+                    print(f"SKIP (not enough model responses) — errors: {errs}")
                     errors += 1
                     continue
 
