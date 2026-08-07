@@ -61,7 +61,7 @@ Infrastructure (Redis Stack + ClickHouse) is managed by `backend/docker-compose.
 
 ### Gateway (`backend/`)
 - **Semantic cache** — 3072-dim Gemini embeddings in Redis Stack, cosine similarity, ~5ms cache hits
-- **Multi-provider routing** — Google Gemini (`gemini-2.5-flash`, `gemini-1.5-flash`) with Groq support ready
+- **Multi-provider routing** — Google Gemini (`gemini-2.5-flash`, `gemini-3.5-flash`) with Groq support ready
 - **Quality-gated `/route`** — calls eval service for the best cost-quality model; 2s timeout with automatic fallback
 - **Zero-block telemetry** — async ClickHouse writes (latency, tokens, cost, cache hit status)
 - **React dashboard** — dark mode, real-time charts for cache rates, cost savings, model traffic
@@ -193,7 +193,7 @@ Response:
 ```json
 {
   "response": "Paris is the capital of France.",
-  "model_used": "gemini-1.5-flash",
+  "model_used": "gemini-3.5-flash",
   "routing_source": "eval_recommendation",
   "latency_ms": 823,
   "tokens": 142,
@@ -222,7 +222,7 @@ Response:
   "prompt": "What is the capital of Australia?",
   "responses": {
     "gemini-2.5-flash": "Canberra is the capital of Australia.",
-    "gemini-1.5-flash": "The capital of Australia is Sydney."
+    "gemini-3.5-flash": "The capital of Australia is Sydney."
   },
   "task_type": "factual"
 }
@@ -270,7 +270,7 @@ Response:
 Response:
 ```json
 {
-  "recommended_model": "gemini-1.5-flash",
+  "recommended_model": "gemini-3.5-flash",
   "expected_cost": 0.00000015,
   "expected_quality_lower_bound": 3.8,
   "confidence_interval": { "mean": 4.1, "lower": 3.8, "upper": 4.4, "n": 12 }
