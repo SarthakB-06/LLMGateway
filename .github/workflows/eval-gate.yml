@@ -44,8 +44,16 @@ jobs:
           CLICKHOUSE_PASSWORD: gateway_secure_123
         run: |
           uvicorn src.main:app --host 0.0.0.0 --port 8000 &
-          sleep 5
-          curl -sf http://localhost:8000/api/v1/health || (echo "Gateway not ready"; exit 1)
+          echo "Waiting for gateway to be ready..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/api/v1/health; then
+              echo "Gateway ready after ${i} attempts"
+              break
+            fi
+            echo "  attempt $i/30 — not ready yet, waiting 2s..."
+            sleep 2
+          done
+          curl -sf http://localhost:8000/api/v1/health || (echo "Gateway not ready after 60s"; exit 1)
         working-directory: backend
       
       - name: Install eval_service dependencies
@@ -62,8 +70,16 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           uvicorn src.main:app --host 0.0.0.0 --port 8001 &
-          sleep 5
-          curl -sf http://localhost:8001/health || (echo "Eval service not ready"; exit 1)
+          echo "Waiting for eval_service to be ready..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8001/health; then
+              echo "Eval service ready after ${i} attempts"
+              break
+            fi
+            echo "  attempt $i/30 — not ready yet, waiting 2s..."
+            sleep 2
+          done
+          curl -sf http://localhost:8001/health || (echo "Eval service not ready after 60s"; exit 1)
         working-directory: eval_service
       
       - name: Run benchmark regression gate
