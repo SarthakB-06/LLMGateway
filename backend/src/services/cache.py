@@ -69,7 +69,14 @@ class CacheService:
             num_results=1
         )
         
-        results = await self.index.query(query)
+        try:
+            results = await self.index.query(query)
+        except Exception as e:
+            # Index was lost (e.g. Redis restart). Reset so next call recreates it.
+            print(f"⚠️ Cache index missing or unavailable ({e}). Resetting index.")
+            self._initialized = False
+            self.index = None
+            return None
         print(f"Raw results from Redis: {results}")
         
         if results and len(results) > 0:
@@ -87,7 +94,7 @@ class CacheService:
             else:
                 print("❌ FAIL: Distance too high. Forcing live API call.")
         else:
-            print("📭 Redis vector index returned 0 matches.")
+            print("💭 Redis vector index returned 0 matches.")
             
         return None
 

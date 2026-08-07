@@ -81,7 +81,11 @@ async def quality_gated_route(payload: RouteRequest, background_tasks: Backgroun
 
     start = time.time()
 
-    cached = await cache_service.get_response(FALLBACK_MODEL, payload.prompt)
+    # Cache is always optional — treat any Redis error as a miss
+    try:
+        cached = await cache_service.get_response(FALLBACK_MODEL, payload.prompt)
+    except Exception:
+        cached = None
     if cached:
         latency_ms = int((time.time() - start) * 1000)
         saved_tokens = cached.get("usage", {}).get("total_tokens", 0)
@@ -125,7 +129,10 @@ async def quality_gated_route(payload: RouteRequest, background_tasks: Backgroun
             "choices": [{"index": 0, "message": {"role": "assistant", "content": response_text}}],
             "usage": {"cache_hit": False, "cache_type": None, "total_tokens": tokens_used},
         }
-        await cache_service.set_response(model_to_use, payload.prompt, cache_payload)
+        try:
+            await cache_service.set_response(model_to_use, payload.prompt, cache_payload)
+        except Exception:
+            pass  # cache write failure is non-fatal
         background_tasks.add_task(
             telemetry_service.log_usage,
             model=model_to_use,
