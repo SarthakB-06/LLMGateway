@@ -75,7 +75,12 @@ async def call_compare(prompt: str, models: list, client: httpx.AsyncClient) -> 
         json={"prompt": prompt, "models": models},
         timeout=90.0,
     )
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        print(f"\n[DEBUG] Compare failed: {e}")
+        print(f"[DEBUG] Response body: {e.response.text}\n")
+        raise
     return resp.json()
 
 
