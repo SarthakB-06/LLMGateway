@@ -37,7 +37,7 @@ CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "gateway_secure_123")
 
 DEFAULT_MODELS = [
     {"provider": "google", "model": "gemini-2.5-flash"},
-    {"provider": "google", "model": "gemini-3.5-flash"},
+    {"provider": "google", "model": "gemini-2.0-flash"},
 ]
 
 def parse_models() -> list:
