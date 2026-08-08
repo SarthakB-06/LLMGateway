@@ -8,7 +8,7 @@ Usage:
 Environment variables:
     EVAL_SERVICE_URL     Base URL of the eval service (default: http://localhost:8001)
     BENCHMARK_MODELS     Comma-separated provider:model pairs
-                         (default: google:gemini-2.5-flash,google:gemini-2.0-flash)
+                         (default: google:gemini-2.5-flash,google:gemini-3.5-flash)
     REGRESSION_THRESHOLD Max allowed drop in CI lower-bound vs previous run (default: 0.3)
     BENCHMARK_LIMIT      How many dataset entries to run (default: 20, for speed in CI)
     CLICKHOUSE_HOST      ClickHouse host for reading previous run (default: localhost)
@@ -37,7 +37,7 @@ CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "gateway_secure_123")
 
 DEFAULT_MODELS = [
     {"provider": "google", "model": "gemini-2.5-flash"},
-    {"provider": "google", "model": "gemini-2.0-flash"},
+    {"provider": "google", "model": "gemini-3.5-flash"},
 ]
 
 def parse_models() -> list:
@@ -75,7 +75,12 @@ async def call_compare(prompt: str, models: list, client: httpx.AsyncClient) -> 
         json={"prompt": prompt, "models": models},
         timeout=90.0,
     )
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        print(f"\n[DEBUG] Compare failed: {e}")
+        print(f"[DEBUG] Response body: {e.response.text}\n")
+        raise
     return resp.json()
 
 
@@ -182,7 +187,9 @@ async def main():
                 }
 
                 if len(responses) < 2:
-                    print("SKIP (not enough model responses)")
+                    # Print the actual errors so CI logs show what failed
+                    errs = [(r.get("model"), r.get("error")) for r in results if "error" in r]
+                    print(f"SKIP (not enough model responses) — errors: {errs}")
                     errors += 1
                     continue
 

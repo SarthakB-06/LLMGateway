@@ -22,7 +22,11 @@ class GatewayClient:
                 json=payload,
                 timeout=60.0
             )
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                error_detail = response.text
+                raise Exception(f"Gateway HTTP {response.status_code}: {error_detail}") from e
             return response.json()
 
 gateway_client = GatewayClient()

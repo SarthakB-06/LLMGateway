@@ -1,3 +1,4 @@
+# schemas.py — v2 (eval service upgrade: bias-mitigated judge, CI, feedback loop)
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 
